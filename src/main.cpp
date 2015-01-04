@@ -4,14 +4,19 @@
  * Distributed under the terms of the MIT license.
  */
 
+#include <iostream>
+#include <limits>
+
 #include <Directory.h>
 #include <Entry.h>
 #include <File.h>
-#include <String.h>
+#include <FindDirectory.h>
 #include <NodeInfo.h>
-#include <iostream>
-#include <limits>
+#include <Path.h>
+#include <String.h>
+
 #include <fs_attr.h>
+
 
 BString* handleAttribute(BString name, const void *data)
 {
@@ -19,10 +24,6 @@ BString* handleAttribute(BString name, const void *data)
 		std::cout << " HREF=\"" << (const char*)data << "\"";
 	} else if (name == "META:title") {
 		return new BString((const char *)data);
-	} else if (name == "BEOS:ICON") {
-		// ?
-	} else if (name == "META:keyw") {
-		// ?
 	}
 	return NULL;
 }
@@ -169,8 +170,16 @@ status_t extract(const char* path)
 
 int main(int argc, char* argv[])
 {
+	BPath dir;
 	switch (argc) {
 		case 1:
+			if (find_directory(B_USER_SETTINGS_DIRECTORY, &dir) == B_OK) {
+				BString dest(dir.Path());
+				dest << "/WebPositive/Bookmarks/";
+				extract(dest.String());
+				break;
+			}
+			std::cerr << "Could not find settings directory." << std::endl;
 			break;
 		case 2:
 			extract(argv[1]);
@@ -181,3 +190,4 @@ int main(int argc, char* argv[])
 	}
 	return 0;
 }
+
