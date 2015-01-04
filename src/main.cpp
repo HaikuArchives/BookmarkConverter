@@ -8,11 +8,72 @@
 #include <Entry.h>
 #include <File.h>
 #include <String.h>
+#include <NodeInfo.h>
 #include <iostream>
 #include <limits>
+#include <fs_attr.h>
 
-void doFile(BFile* file, int indent)
+BString* handleAttribute(BString name, const void *data)
 {
+	if (name == "META:url") {
+		std::cout << " HREF=\"" << (const char*)data << "\"";
+	} else if (name == "META:title") {
+		return new BString((const char *)data);
+	} else if (name == "BEOS:ICON") {
+		// ?
+	} else if (name == "META:keyw") {
+		// ?
+	}
+	return NULL;
+}
+
+status_t doFile(BFile* file, int indent)
+{
+	if (file == NULL)
+		return B_BAD_VALUE;
+
+	BNodeInfo nodeInfo(file);
+	char buffer[B_MIME_TYPE_LENGTH];
+	nodeInfo.GetType(buffer);
+
+	if (BString(buffer) != BString("application/x-vnd.Be-bookmark"))
+		return B_BAD_VALUE;
+
+	BString ind;
+	ind.Append(' ', indent);
+	std::cout << ind << "<DT><A";
+
+	BString* title;
+
+	struct attr_info info;
+	char attrBuffer[B_ATTR_NAME_LENGTH];
+	while (file->GetNextAttrName(attrBuffer) == B_OK) {
+		if (file->GetAttrInfo(attrBuffer, &info) != B_OK)
+			continue;
+
+		uint8_t* data = new (std::nothrow) uint8_t[info.size];
+		if (data == NULL)
+			continue;
+
+		if (file->ReadAttr(attrBuffer, info.type, 0, data, info.size) ==
+			info.size) {
+
+			BString* maybeTitle = handleAttribute(BString(attrBuffer),
+				data);
+
+			if (maybeTitle != NULL)
+				title = maybeTitle;
+		}
+		delete[] data;
+	}
+	
+	if (title == NULL)
+		title = new BString("Unknown");
+
+	std::cout << ">" << *title << "</A>" << std::endl;
+
+	delete title;
+	return B_OK;
 }
 
 status_t getLastChanged(BDirectory* dir, time_t* out)
