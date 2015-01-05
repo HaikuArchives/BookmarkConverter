@@ -4,6 +4,7 @@
  * Distributed under the terms of the MIT license.
  */
 
+#include <algorithm>
 #include <iostream>
 #include <limits>
 
@@ -18,48 +19,49 @@
 #include <fs_attr.h>
 
 
-BString* handleAttribute(BString name, const void *data)
+BString handleAttribute(BString name, const void *data)
 {
 	if (name == "META:url") {
 		std::cout << " HREF=\"" << (const char*)data << "\"";
 	} else if (name == "META:title") {
-		return new BString((const char *)data);
+		return BString((const char *)data);
 	}
 	return NULL;
 }
 
-status_t doFile(BFile* file, int indent)
+status_t doFile(BFile& file, int indent)
 {
-	if (file == NULL)
-		return B_BAD_VALUE;
-
-	BNodeInfo nodeInfo(file);
-	char buffer[B_MIME_TYPE_LENGTH];
+	size_t bufferSize = std::max(B_MIME_TYPE_LENGTH, B_ATTR_NAME_LENGTH);
+	BNodeInfo nodeInfo(&file);
+	char* buffer = new (std::nothrow) char[bufferSize];
+	if (buffer == NULL)
+		return B_NO_MEMORY;
 	nodeInfo.GetType(buffer);
 
-	if (BString(buffer) != BString("application/x-vnd.Be-bookmark"))
+	if (BString(buffer) != "application/x-vnd.Be-bookmark") {
+		delete[] buffer;
 		return B_BAD_VALUE;
+	}
 
 	BString ind;
 	ind.Append(' ', indent);
 	std::cout << ind << "<DT><A";
 
-	BString* title;
+	BString title;
 
 	struct attr_info info;
-	char attrBuffer[B_ATTR_NAME_LENGTH];
-	while (file->GetNextAttrName(attrBuffer) == B_OK) {
-		if (file->GetAttrInfo(attrBuffer, &info) != B_OK)
+	while (file.GetNextAttrName(buffer) == B_OK) {
+		if (file.GetAttrInfo(buffer, &info) != B_OK)
 			continue;
 
 		uint8_t* data = new (std::nothrow) uint8_t[info.size];
 		if (data == NULL)
 			continue;
 
-		if (file->ReadAttr(attrBuffer, info.type, 0, data, info.size) ==
+		if (file.ReadAttr(buffer, info.type, 0, data, info.size) ==
 			info.size) {
 
-			BString* maybeTitle = handleAttribute(BString(attrBuffer),
+			BString maybeTitle = handleAttribute(BString(buffer),
 				data);
 
 			if (maybeTitle != NULL)
@@ -67,13 +69,12 @@ status_t doFile(BFile* file, int indent)
 		}
 		delete[] data;
 	}
-	
+	delete[] buffer;
 	if (title == NULL)
-		title = new BString("Unknown");
+		title = "Unknown";
 
-	std::cout << ">" << *title << "</A>" << std::endl;
+	std::cout << ">" << title << "</A>" << std::endl;
 
-	delete title;
 	return B_OK;
 }
 
@@ -100,22 +101,19 @@ status_t getLastChanged(BDirectory* dir, time_t* out)
 	return B_ERROR;
 }
 
-status_t doDirectory(BDirectory* dir, const char* name, int indent)
+status_t doDirectory(BDirectory& dir, const char* name, int indent)
 {
-	if (dir == NULL)
-		return B_BAD_VALUE;
-
 	BString ind;
 	ind.Append(' ', indent);
 
 	if (indent > 0) {
 		std::cout << ind << "<DT><H3";
 		time_t addDate;
-		if (dir->GetCreationTime(&addDate) == B_OK) {
+		if (dir.GetCreationTime(&addDate) == B_OK) {
 			std::cout << " ADD_DATE=\"" << addDate << "\" ";
 
 			time_t lastModified = addDate;
-			getLastChanged(dir, &lastModified);
+			getLastChanged(&dir, &lastModified);
 
 			std::cout << "LAST_MODIFIED=\"" << lastModified << "\"";
 		}
@@ -124,20 +122,20 @@ status_t doDirectory(BDirectory* dir, const char* name, int indent)
 	}
 
 	BEntry current;
-	dir->Rewind();
-	while (dir->GetNextEntry(&current) == B_OK) {
+	dir.Rewind();
+	while (dir.GetNextEntry(&current) == B_OK) {
 		if (current.IsDirectory()) {
 			BDirectory subdir(&current);
 
 			char buffer[B_FILE_NAME_LENGTH];
 			if (current.GetName(buffer) == B_OK)
-				doDirectory(&subdir, buffer, indent + 4);
+				doDirectory(subdir, buffer, indent + 4);
 			else
-				doDirectory(&subdir, "Unknown", indent + 4);
+				doDirectory(subdir, "Unknown", indent + 4);
 		}
 		else if (current.IsFile()) {
 			BFile subfile(&current, B_READ_ONLY);
-			doFile(&subfile, indent + 4);
+			doFile(subfile, indent + 4);
 		}
 	}
 
@@ -163,7 +161,7 @@ status_t extract(const char* path)
 	if (parent.InitCheck() != B_OK)
 		return B_ERROR;
 
-	doDirectory(&parent, NULL, 0);
+	doDirectory(parent, NULL, 0);
 	
 	std::cout << "</DL><p>" << std::endl;
 }
