@@ -31,17 +31,13 @@ BString handleAttribute(BString name, const void *data)
 
 status_t doFile(BFile& file, int indent)
 {
-	size_t bufferSize = std::max(B_MIME_TYPE_LENGTH, B_ATTR_NAME_LENGTH);
 	BNodeInfo nodeInfo(&file);
-	char* buffer = new (std::nothrow) char[bufferSize];
-	if (buffer == NULL)
-		return B_NO_MEMORY;
+
+	char buffer[B_MIME_TYPE_LENGTH];
 	nodeInfo.GetType(buffer);
 
-	if (BString(buffer) != "application/x-vnd.Be-bookmark") {
-		delete[] buffer;
+	if (BString(buffer) != "application/x-vnd.Be-bookmark")
 		return B_BAD_VALUE;
-	}
 
 	BString ind;
 	ind.Append(' ', indent);
@@ -50,18 +46,19 @@ status_t doFile(BFile& file, int indent)
 	BString title;
 
 	struct attr_info info;
-	while (file.GetNextAttrName(buffer) == B_OK) {
-		if (file.GetAttrInfo(buffer, &info) != B_OK)
+	char attrBuffer[B_ATTR_NAME_LENGTH];
+	while (file.GetNextAttrName(attrBuffer) == B_OK) {
+		if (file.GetAttrInfo(attrBuffer, &info) != B_OK)
 			continue;
 
 		uint8_t* data = new (std::nothrow) uint8_t[info.size];
 		if (data == NULL)
 			continue;
 
-		if (file.ReadAttr(buffer, info.type, 0, data, info.size) ==
+		if (file.ReadAttr(attrBuffer, info.type, 0, data, info.size) ==
 			info.size) {
 
-			BString maybeTitle = handleAttribute(BString(buffer),
+			BString maybeTitle = handleAttribute(BString(attrBuffer),
 				data);
 
 			if (maybeTitle != NULL)
@@ -69,7 +66,6 @@ status_t doFile(BFile& file, int indent)
 		}
 		delete[] data;
 	}
-	delete[] buffer;
 	if (title == NULL)
 		title = "Unknown";
 
