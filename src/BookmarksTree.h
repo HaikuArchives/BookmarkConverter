@@ -16,34 +16,40 @@ class BookmarksEntry {
 };
 
 class BookmarksFolder : public BookmarksEntry, std::vector<BookmarksEntry*> {
-	public:
-		BookmarksFolder();
-		~BookmarksFolder();
+public:
+	BookmarksFolder();
+	~BookmarksFolder();
 
-		bool IsBookmark();
-		bool IsFolder();
+	bool IsBookmark();
+	bool IsFolder();
+
+	const char* GetName();
+	void SetName(const char* name);
+
+private:
+	BString fName;
 };
 
 class Bookmark : public BookmarksEntry {
-	public:
-		Bookmark();
-		~Bookmark();
-			
-		bool IsBookmark();
-		bool IsFolder();
+public:
+	Bookmark();
+	~Bookmark();
 
-		const char* GetURL();
-		void SetURL(const char* url);
+	bool IsBookmark();
+	bool IsFolder();
 
-		const char* GetTitle();
-		void SetTitle(const char* title);
+	const char* GetURL();
+	void SetURL(const char* url);
 
-		const char* GetKeywords();
-		void SetKeywords(const char* keywords);
+	const char* GetTitle();
+	void SetTitle(const char* title);
 
-	private:
-		BString fURL;
-		BString fTitle;
-		BString fKeywords;
-}
+	const char* GetKeywords();
+	void SetKeywords(const char* keywords);
+
+private:
+	BString fURL;
+	BString fTitle;
+	BString fKeywords;
+};
 #endif // BOOKMARKS_TREE_H
