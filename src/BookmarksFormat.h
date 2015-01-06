@@ -7,13 +7,20 @@
 #ifndef BOOKMARKS_FORMAT_H
 #define BOOKMARKS_FORMAT_H
 
+class BookmarksEntry;
+class BookmarksFolder;
+class Bookmark;
+
 class BookmarksFormat {
 public:
-	void Output(BooksmarksEntry* entry) = 0;
-}
+	virtual void Output(BookmarksEntry* entry) = 0;
+};
 
 class HTMLFormat : public BookmarksFormat {
 public:
+	HTMLFormat();
+	~HTMLFormat();
+
 	void Output(BookmarksEntry* entry);
 
 	void SetIndentSize(int spaces);
@@ -21,13 +28,17 @@ public:
 
 private:
 	int fIndentSize;
-}
+
+	void HandleItem(BookmarksEntry* entry, int indent);
+	void OutputDirectory(BookmarksFolder& dir, int indent);
+	void OutputBookmark(Bookmark& bookmark, int indent);
+};
 
 /*
 class ChromeFormat {
 public:
 	void Output(BookmarksEntry* entry);
-}
+};
 */
 
 #endif // BOOKMARKS_FORMAT_H

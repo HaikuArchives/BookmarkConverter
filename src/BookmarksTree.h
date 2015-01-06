@@ -15,7 +15,8 @@ public:
 	virtual bool IsFolder() = 0;
 };
 
-class BookmarksFolder : public BookmarksEntry, std::vector<BookmarksEntry*> {
+class BookmarksFolder : public BookmarksEntry,
+	public std::vector<BookmarksEntry*> {
 public:
 	BookmarksFolder();
 	~BookmarksFolder();
