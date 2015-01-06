@@ -146,11 +146,7 @@ int main(int argc, char* argv[])
 				if (format.ICompare("html") == 0)
 					chosen = new HTMLFormat();
 				else if (format.ICompare("chrome") == 0)
-				{
-					std::cout << "Not implemented!" << std::endl;
-					delete chosen;
-					return 56;
-				}
+					chosen = new ChromeFormat();
 				else
 					return helpMessage(2, chosen);
 			}

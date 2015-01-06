@@ -30,7 +30,8 @@ APP_MIME_SIG =
 #	Also note that spaces in folder names do not work well with this Makefile.
 SRCS = src/main.cpp \
 	   src/BookmarksTree.cpp \
-	   src/HTMLFormat.cpp
+	   src/HTMLFormat.cpp \
+	   src/ChromeFormat.cpp
 
 #	Specify the resource definition files to use. Full or relative paths can be
 #	used.

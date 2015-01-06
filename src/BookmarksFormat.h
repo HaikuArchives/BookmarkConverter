@@ -34,11 +34,25 @@ private:
 	void OutputBookmark(Bookmark& bookmark, int indent);
 };
 
-/*
-class ChromeFormat {
+
+class ChromeFormat : public BookmarksFormat {
 public:
+	ChromeFormat();
+	~ChromeFormat();
+
 	void Output(BookmarksEntry* entry);
+
+	void SetIndentSize(int spaces);
+	int GetIndentSize();
+
+private:
+	int fNextID;
+	int fIndentSize;
+
+	void HandleItem(BookmarksEntry* entry, int indent, bool first);
+	void OutputDirectory(BookmarksFolder& dir, int indent, bool first);
+	void OutputBookmark(Bookmark& bookmark, int indent, bool first);
 };
-*/
+
 
 #endif // BOOKMARKS_FORMAT_H
