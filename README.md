@@ -1,5 +1,5 @@
-exporsitive
-===========
+bookmarkconverter
+=================
 
 Bookmark export tool for WebPositive on Haiku
 
@@ -15,8 +15,8 @@ Usage
 
 To export Web+ bookmarks:
 
-    exporsitive > Bookmarks.html
+    bookmarkconverter > Bookmarks.html
 
 To export any other bookmarks folder:
 
-    exporsitive /boot/home/config/path/to/bookmarks/folder > Bookmarks.html
+    bookmarkconverter /boot/home/config/path/to/bookmarks/folder > Bookmarks.html

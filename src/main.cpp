@@ -113,7 +113,7 @@ int helpMessage(int code, BookmarksFormat* toDelete)
 	delete toDelete;
 	std::cout	<< "Converts WebPositive bookmarks to various formats."
 				<< std::endl << std::endl
-				<< "Usage: exporsitive [option] [path]"
+				<< "Usage: bookmarkconverter [option] [path]"
 				<< std::endl << std::endl
 				<< "    -f --format FORMAT    "
 				<< "Chooses the format (HTML, CHROME)" << std::endl
