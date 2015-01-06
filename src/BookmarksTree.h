@@ -10,9 +10,9 @@
 #include <vector>
 
 class BookmarksEntry {
-	public:
-		virtual bool IsBookmark() = 0;
-		virtual bool IsFolder() = 0;
+public:
+	virtual bool IsBookmark() = 0;
+	virtual bool IsFolder() = 0;
 };
 
 class BookmarksFolder : public BookmarksEntry, std::vector<BookmarksEntry*> {
