@@ -7,6 +7,10 @@
 #include <String.h>
 #include "BookmarksTree.h"
 
+BookmarksEntry::~BookmarksEntry()
+{
+}
+
 BookmarksFolder::BookmarksFolder()
 	:
 	std::vector<BookmarksEntry*>(),
@@ -19,7 +23,7 @@ BookmarksFolder::~BookmarksFolder()
 	std::vector<BookmarksEntry*>::iterator it;
 
 	for (it = this->begin(); it != this->end(); it++) {
-		delete *it;
+		delete (*it);
 	}
 }
 

@@ -11,6 +11,8 @@
 
 class BookmarksEntry {
 public:
+	virtual ~BookmarksEntry();
+
 	virtual bool IsBookmark() = 0;
 	virtual bool IsFolder() = 0;
 };

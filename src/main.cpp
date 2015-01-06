@@ -18,30 +18,20 @@
 
 #include <fs_attr.h>
 
+#include "BookmarksTree.h"
+#include "BookmarksFormat.h"
 
-BString handleAttribute(BString name, const void *data)
+Bookmark* doFile(BFile& file)
 {
-	if (name == "META:url") {
-		std::cout << " HREF=\"" << (const char*)data << "\"";
-	} else if (name == "META:title") {
-		return BString((const char *)data);
-	}
-	return NULL;
-}
+	Bookmark* result = new Bookmark();
 
-status_t doFile(BFile& file, int indent)
-{
 	BNodeInfo nodeInfo(&file);
 
 	char buffer[B_MIME_TYPE_LENGTH];
 	nodeInfo.GetType(buffer);
 
 	if (BString(buffer) != "application/x-vnd.Be-bookmark")
-		return B_BAD_VALUE;
-
-	BString ind;
-	ind.Append(' ', indent);
-	std::cout << ind << "<DT><A";
+		return NULL;
 
 	BString title;
 
@@ -57,131 +47,134 @@ status_t doFile(BFile& file, int indent)
 
 		if (file.ReadAttr(attrBuffer, info.type, 0, data, info.size) ==
 			info.size) {
-
-			BString maybeTitle = handleAttribute(BString(attrBuffer),
-				data);
-
-			if (maybeTitle != NULL)
-				title = maybeTitle;
+			BString name(attrBuffer);
+			if (name == "META:url") {
+				result->SetURL((const char *)data);
+			} else if (name == "META:title") {
+				result->SetTitle((const char *)data);
+			} else if (name == "META:keyw") {
+				result->SetKeywords((const char *)data);
+			}
 		}
 		delete[] data;
 	}
-	if (title == NULL)
-		title = "Unknown";
 
-	std::cout << ">" << title << "</A>" << std::endl;
-
-	return B_OK;
+	return result;
 }
 
-status_t getLastChanged(BDirectory* dir, time_t* out)
+BookmarksFolder* doDirectory(BDirectory& dir, const char* name)
 {
-	if (dir == NULL || out == NULL)
-		return B_BAD_VALUE;
-
-	time_t latest = std::numeric_limits<time_t>::min(), cTime;
-	BEntry current;
-	bool any = false;
-
-	while (dir->GetNextEntry(&current) == B_OK) {
-		if (current.GetCreationTime(&cTime) == B_OK && cTime > latest) {
-			any = true;
-			latest = cTime;
-		}
-	}
-
-	if (any) {
-		*out = latest;
-		return B_OK;
-	}
-	return B_ERROR;
-}
-
-status_t doDirectory(BDirectory& dir, const char* name, int indent)
-{
-	BString ind;
-	ind.Append(' ', indent);
-
-	if (indent > 0) {
-		std::cout << ind << "<DT><H3";
-		time_t addDate;
-		if (dir.GetCreationTime(&addDate) == B_OK) {
-			std::cout << " ADD_DATE=\"" << addDate << "\" ";
-
-			time_t lastModified = addDate;
-			getLastChanged(&dir, &lastModified);
-
-			std::cout << "LAST_MODIFIED=\"" << lastModified << "\"";
-		}
-		std::cout << ">" << name << "</H3>" << std::endl << ind << "<DL><p>"
-			<< std::endl;
-	}
+	BookmarksFolder* result = new BookmarksFolder();
+	result->SetName(name);
 
 	BEntry current;
 	dir.Rewind();
 	while (dir.GetNextEntry(&current) == B_OK) {
+		BookmarksEntry* entry = NULL;
 		if (current.IsDirectory()) {
 			BDirectory subdir(&current);
 
 			char buffer[B_FILE_NAME_LENGTH];
 			if (current.GetName(buffer) == B_OK)
-				doDirectory(subdir, buffer, indent + 4);
+				entry = doDirectory(subdir, buffer);
 			else
-				doDirectory(subdir, "Unknown", indent + 4);
+				entry = doDirectory(subdir, "Unknown");
 		}
 		else if (current.IsFile()) {
+			Bookmark* file;
 			BFile subfile(&current, B_READ_ONLY);
-			doFile(subfile, indent + 4);
+			entry = doFile(subfile);
 		}
+
+		if (entry != NULL)
+			result->push_back(entry);
 	}
 
-	if (indent > 0)
-		std::cout << ind << "</DL><p>" << std::endl;
-
-	return B_OK;
+	return result;
 }
 
-status_t extract(const char* path)
+status_t extract(const char* path, BookmarksFormat* format)
 {
-	std::cout	<< "<!DOCTYPE NETSCAPE-Bookmark-file-1>" << std::endl
-				<< "<!-- This is an automatically generated file." << std::endl
-				<< "     It will be read and overwritten." << std::endl
-				<< "     DO NOT EDIT! -->" << std::endl
-				<< "<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html;"
-				<< " charset=UTF-8\">" << std::endl
-				<< "<TITLE>Bookmarks</TITLE>" << std::endl
-				<< "<H1>Bookmarks</H1>" << std::endl
-				<< "<DL><p>" << std::endl;
-
 	BDirectory parent(path);
 	if (parent.InitCheck() != B_OK)
 		return B_ERROR;
 
-	doDirectory(parent, NULL, 0);
-	
-	std::cout << "</DL><p>" << std::endl;
+	BookmarksFolder* result = doDirectory(parent, NULL);
+
+	format->Output(result);
+
+	delete result;
+
+	return B_OK;
+}
+
+int helpMessage(int code, BookmarksFormat* toDelete)
+{
+	delete toDelete;
+	std::cout	<< "Converts WebPositive bookmarks to various formats."
+				<< std::endl << std::endl
+				<< "Usage: exporsitive [option] [path]"
+				<< std::endl << std::endl
+				<< "    -f --format FORMAT    "
+				<< "Chooses the format (HTML, CHROME)" << std::endl
+				<< "    -h --help             "
+				<< "Displays this message" << std::endl << std::endl
+				<< "    path                  "
+				<< "Optional. Sets the path to the bookmarks folder."
+				<< std::endl << "                           "
+				<< "Default: ~/config/settings/WebPositive/Bookmarks";
+	return code;
 }
 
 int main(int argc, char* argv[])
 {
-	BPath dir;
-	switch (argc) {
-		case 1:
-			if (find_directory(B_USER_SETTINGS_DIRECTORY, &dir) == B_OK) {
-				BString dest(dir.Path());
-				dest << "/WebPositive/Bookmarks/";
-				extract(dest.String());
-				break;
+	BookmarksFormat* chosen = NULL;
+	BString path;
+	int mode;
+	int curarg = 0;
+	while (curarg + 1 < argc) {
+		curarg++;
+		BString current(argv[curarg]);
+		if (current == "-h" || current == "--help")
+			return helpMessage(0, chosen);
+		else if (current == "-f" || current == "--format") {
+			if (curarg == argc - 1)
+				return helpMessage(1, chosen);
+			else {
+				curarg++;
+				BString format(argv[curarg]);
+				if (format.ICompare("html") == 0)
+					chosen = new HTMLFormat();
+				else if (format.ICompare("chrome") == 0)
+				{
+					std::cout << "Not implemented!" << std::endl;
+					delete chosen;
+					return 56;
+				}
+				else
+					return helpMessage(2, chosen);
 			}
-			std::cerr << "Could not find settings directory." << std::endl;
-			break;
-		case 2:
-			extract(argv[1]);
-			break;
-		default:
-			std::cerr << "Too many arguments." << std::endl;
-			return 1;
+		} else {
+			if (path != "")
+				return helpMessage(3, chosen);
+			path = current;
+		}
 	}
+
+	if (path == "") {
+		BPath dir;
+		if (find_directory(B_USER_SETTINGS_DIRECTORY, &dir) == B_OK) {
+			path = dir.Path();
+			path << "/WebPositive/Bookmarks/";
+		}
+	}
+
+	if (chosen == NULL)
+		chosen = new HTMLFormat();
+
+	extract(path.String(), chosen);
+
+	delete chosen;
 	return 0;
 }
 

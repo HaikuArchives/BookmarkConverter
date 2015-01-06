@@ -59,7 +59,7 @@ void HTMLFormat::OutputBookmark(Bookmark& bookmark, int indent)
 {
 	BString ind;
 	ind.Append(' ', indent * fIndentSize);
-	std::cout << "<DT><A HREF=\"" << bookmark.GetURL() << "\">"
+	std::cout << ind << "<DT><A HREF=\"" << bookmark.GetURL() << "\">"
 		<< bookmark.GetTitle() << "</A>" << std::endl;
 }
 
