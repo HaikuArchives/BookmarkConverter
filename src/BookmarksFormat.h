@@ -11,17 +11,22 @@ class BookmarksEntry;
 class BookmarksFolder;
 class Bookmark;
 
-class BookmarksFormat {
+class BookmarksOutput {
 public:
-	virtual void Output(BookmarksEntry* entry) = 0;
+	virtual void Output(BookmarksEntry* entry, const char* destination) = 0;
 };
 
-class HTMLFormat : public BookmarksFormat {
+class BookmarksInput {
+public:
+	virtual BookmarksEntry* Input(const char* source) = 0;
+};
+
+class HTMLOutput : public BookmarksOutput {
 public:
 	HTMLFormat();
 	~HTMLFormat();
 
-	void Output(BookmarksEntry* entry);
+	void Output(BookmarksEntry* entry, const char* destination);
 
 	void SetIndentSize(int spaces);
 	int GetIndentSize();
@@ -35,12 +40,12 @@ private:
 };
 
 
-class ChromeFormat : public BookmarksFormat {
+class ChromeOutput : public BookmarksOutput {
 public:
 	ChromeFormat();
 	~ChromeFormat();
 
-	void Output(BookmarksEntry* entry);
+	void Output(BookmarksEntry* entry, const char* destination);
 
 	void SetIndentSize(int spaces);
 	int GetIndentSize();
@@ -52,6 +57,38 @@ private:
 	void HandleItem(BookmarksEntry* entry, int indent, bool first);
 	void OutputDirectory(BookmarksFolder& dir, int indent, bool first);
 	void OutputBookmark(Bookmark& bookmark, int indent, bool first);
+};
+
+class BeOutput : public BookmarksOutput {
+public:
+	BeOutput();
+	~BeOutput();
+
+	void Output(BookmarksEntry* entry, const char* destination);
+};
+
+class BeInput : public BookmarksInput {
+public:
+	BeInput();
+	~BeInput();
+
+	BookmarksEntry* Input(const char* source);
+};
+
+class QupZillaInput : public BookmarksInput {
+public:
+	QupZillaInput();
+	~QupZillaInput();
+
+	BookmarksEntry* Input(const char* source);
+};
+
+class WebPositiveInput : public BookmarksInput {
+public:
+	WebPositiveInput();
+	~QupZillaInput();
+
+	BookmarksEntry* Input(const char* source);
 };
 
 
