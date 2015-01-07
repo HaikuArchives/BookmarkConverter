@@ -63,6 +63,8 @@ int main(int argc, char* argv[])
 					output = new HTMLOutput();
 				else if (format.ICompare("chrome") == 0)
 					output = new ChromeOutput();
+				else if (format.ICompare("be") == 0)
+					output = new BeOutput();
 				else
 					return helpMessage(2, output, input);
 			}

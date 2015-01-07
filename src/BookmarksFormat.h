@@ -64,15 +64,19 @@ private:
 	void OutputDirectory(BookmarksFolder& dir, int indent, bool first);
 	void OutputBookmark(Bookmark& bookmark, int indent, bool first);
 };
-/*
+
 class BeOutput : public BookmarksOutput {
 public:
 	BeOutput();
 	~BeOutput();
 
 	void Output(BookmarksEntry* entry, const char* destination);
+
+private:
+	void HandleItem(BookmarksEntry* entry, bool first, BDirectory& dest);
+	void OutputDirectory(BookmarksFolder& entry, bool first, BDirectory& dest);
+	void OutputBookmark(Bookmark& entry, BDirectory& dest);
 };
-*/
 
 class BeInput : public BookmarksInput {
 public:
@@ -85,18 +89,11 @@ private:
 	Bookmark* readFile(BFile& file);
 	BookmarksFolder* readDirectory(BDirectory& dir, const char* name);
 };
+
 /*
 class QupZillaInput : public BookmarksInput {
 public:
 	QupZillaInput();
-	~QupZillaInput();
-
-	BookmarksEntry* Input(const char* source);
-};
-
-class WebPositiveInput : public BookmarksInput {
-public:
-	WebPositiveInput();
 	~QupZillaInput();
 
 	BookmarksEntry* Input(const char* source);

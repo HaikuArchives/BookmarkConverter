@@ -117,3 +117,63 @@ BookmarksEntry* BeInput::Input(const char* source)
 
 	return readDirectory(parent, NULL);
 }
+
+BeOutput::BeOutput()
+{
+}
+
+BeOutput::~BeOutput()
+{
+}
+
+void BeOutput::Output(BookmarksEntry* entry, const char* destination)
+{
+	std::cout << "Yes: " << destination << std::endl;
+	BDirectory dir(destination);
+	if (dir.InitCheck() == B_OK)
+		HandleItem(entry, true, dir);
+}
+
+void BeOutput::HandleItem(BookmarksEntry* entry, bool first, BDirectory& dest)
+{
+	std::cout << "HandleItem" << std::endl;
+	if (entry->IsFolder()) {
+		OutputDirectory(*static_cast<BookmarksFolder*>(entry), first, dest);
+	} else if (entry->IsBookmark()) {
+		OutputBookmark(*static_cast<Bookmark*>(entry), dest);
+	}
+}
+
+void BeOutput::OutputDirectory(BookmarksFolder& entry, bool first,
+	BDirectory& dest)
+{
+	BDirectory next = dest;
+	if (!first) {
+		BDirectory tryCreate;
+		status_t result = dest.CreateDirectory(entry.GetName(), &tryCreate);
+		if (result == B_OK || result == B_FILE_EXISTS)
+			next = tryCreate;
+	}
+	
+	BookmarksFolder::iterator it;
+	for (it = entry.begin(); it != entry.end(); it++) {
+		HandleItem(*it, false, next);
+	}
+}
+
+void BeOutput::OutputBookmark(Bookmark& entry, BDirectory& dest)
+{
+	BFile sink;
+	if (dest.CreateFile(entry.GetTitle(), &sink, false) != B_OK)
+		return;
+
+	sink.WriteAttr("META:title", 'CSTR', 0, entry.GetTitle(),
+		BString(entry.GetTitle()).Length() + 1);
+	sink.WriteAttr("META:url", 'CSTR', 0, entry.GetURL(),
+		BString(entry.GetURL()).Length() + 1);
+
+	if (BString(entry.GetKeywords()) != "") {
+		sink.WriteAttr("META:keyw", 'CSTR', 0, entry.GetKeywords(),
+			BString(entry.GetKeywords()).Length() + 1);
+	}
+}
