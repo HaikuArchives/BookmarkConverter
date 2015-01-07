@@ -9,6 +9,8 @@
 
 #include <iostream>
 
+class BFile;
+class BDirectory;
 class BookmarksEntry;
 class BookmarksFolder;
 class Bookmark;
@@ -70,6 +72,7 @@ public:
 
 	void Output(BookmarksEntry* entry, const char* destination);
 };
+*/
 
 class BeInput : public BookmarksInput {
 public:
@@ -77,8 +80,12 @@ public:
 	~BeInput();
 
 	BookmarksEntry* Input(const char* source);
-};
 
+private:
+	Bookmark* readFile(BFile& file);
+	BookmarksFolder* readDirectory(BDirectory& dir, const char* name);
+};
+/*
 class QupZillaInput : public BookmarksInput {
 public:
 	QupZillaInput();

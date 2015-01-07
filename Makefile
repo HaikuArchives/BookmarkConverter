@@ -31,7 +31,8 @@ APP_MIME_SIG =
 SRCS = src/main.cpp \
 	   src/BookmarksTree.cpp \
 	   src/HTMLFormat.cpp \
-	   src/ChromeFormat.cpp
+	   src/ChromeFormat.cpp \
+	   src/BeFormat.cpp
 
 #	Specify the resource definition files to use. Full or relative paths can be
 #	used.
