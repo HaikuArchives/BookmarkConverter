@@ -1,9 +1,10 @@
 /*
- * HTMLFormat.cpp
+ * HTMLOutput.cpp
  * Copyright (c) 2015 Markus Himmel. All rights reserved.
  * Distributed under the terms of the MIT license.
  */
 
+#include <fstream>
 #include <iostream>
 
 #include <String.h>
@@ -11,9 +12,20 @@
 #include "BookmarksFormat.h"
 #include "BookmarksTree.h"
 
-void HTMLFormat::Output(BookmarksEntry* entry)
+void HTMLOutput::Output(BookmarksEntry* entry, const char* destination)
 {
-	std::cout	<< "<!DOCTYPE NETSCAPE-Bookmark-file-1>" << std::endl
+	delete fDestination;
+
+	if (destination != NULL) {
+		fDestination = new std::ofstream(destination);
+		if (!fDestination->good()) {
+			delete fDestination;
+			fDestination = &std::cout;
+		}
+	} else
+		fDestination = &std::cout;
+
+	*fDestination	<< "<!DOCTYPE NETSCAPE-Bookmark-file-1>" << std::endl
 				<< "<!-- This is an automatically generated file." << std::endl
 				<< "     It will be read and overwritten." << std::endl
 				<< "     DO NOT EDIT! -->" << std::endl
@@ -25,10 +37,10 @@ void HTMLFormat::Output(BookmarksEntry* entry)
 
 	HandleItem(entry, 0);
 
-	std::cout << "</DL><p>" << std::endl;
+	*fDestination << "</DL><p>" << std::endl;
 }
 
-void HTMLFormat::HandleItem(BookmarksEntry* entry, int indent)
+void HTMLOutput::HandleItem(BookmarksEntry* entry, int indent)
 {
 	if (entry->IsFolder()) {
 		OutputDirectory(*static_cast<BookmarksFolder*>(entry), indent);
@@ -37,13 +49,13 @@ void HTMLFormat::HandleItem(BookmarksEntry* entry, int indent)
 	}
 }
 
-void HTMLFormat::OutputDirectory(BookmarksFolder& dir, int indent)
+void HTMLOutput::OutputDirectory(BookmarksFolder& dir, int indent)
 {
 	BString ind;
 	ind.Append(' ', indent * fIndentSize);
 
 	if (indent > 0)
-		std::cout << ind << "<DT><H3>" << dir.GetName() << "</H3>" << std::endl
+		*fDestination << ind << "<DT><H3>" << dir.GetName() << "</H3>" << std::endl
 			<< ind << "<DL><p>" << std::endl;
 
 	std::vector<BookmarksEntry*>::iterator it;
@@ -52,34 +64,36 @@ void HTMLFormat::OutputDirectory(BookmarksFolder& dir, int indent)
 	}
 
 	if (indent > 0)
-		std::cout << ind << "</DL><p>" << std::endl;
+		*fDestination << ind << "</DL><p>" << std::endl;
 }
 
-void HTMLFormat::OutputBookmark(Bookmark& bookmark, int indent)
+void HTMLOutput::OutputBookmark(Bookmark& bookmark, int indent)
 {
 	BString ind;
 	ind.Append(' ', indent * fIndentSize);
-	std::cout << ind << "<DT><A HREF=\"" << bookmark.GetURL() << "\">"
+	*fDestination << ind << "<DT><A HREF=\"" << bookmark.GetURL() << "\">"
 		<< bookmark.GetTitle() << "</A>" << std::endl;
 }
 
-void HTMLFormat::SetIndentSize(int spaces)
+void HTMLOutput::SetIndentSize(int spaces)
 {
 	if (spaces >= 0)
 		fIndentSize = spaces;
 }
 
-int HTMLFormat::GetIndentSize()
+int HTMLOutput::GetIndentSize()
 {
 	return fIndentSize;
 }
 
-HTMLFormat::HTMLFormat()
+HTMLOutput::HTMLOutput()
 	:
-	fIndentSize(4)
+	fIndentSize(4),
+	fDestination(NULL)
 {
 }
 
-HTMLFormat::~HTMLFormat()
+HTMLOutput::~HTMLOutput()
 {
+	delete fDestination;
 }

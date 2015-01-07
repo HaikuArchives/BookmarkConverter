@@ -7,6 +7,8 @@
 #ifndef BOOKMARKS_FORMAT_H
 #define BOOKMARKS_FORMAT_H
 
+#include <iostream>
+
 class BookmarksEntry;
 class BookmarksFolder;
 class Bookmark;
@@ -23,8 +25,8 @@ public:
 
 class HTMLOutput : public BookmarksOutput {
 public:
-	HTMLFormat();
-	~HTMLFormat();
+	HTMLOutput();
+	~HTMLOutput();
 
 	void Output(BookmarksEntry* entry, const char* destination);
 
@@ -32,6 +34,7 @@ public:
 	int GetIndentSize();
 
 private:
+	std::ostream* fDestination;
 	int fIndentSize;
 
 	void HandleItem(BookmarksEntry* entry, int indent);
@@ -42,8 +45,8 @@ private:
 
 class ChromeOutput : public BookmarksOutput {
 public:
-	ChromeFormat();
-	~ChromeFormat();
+	ChromeOutput();
+	~ChromeOutput();
 
 	void Output(BookmarksEntry* entry, const char* destination);
 
@@ -51,6 +54,7 @@ public:
 	int GetIndentSize();
 
 private:
+	std::ostream* fDestination;
 	int fNextID;
 	int fIndentSize;
 
@@ -58,7 +62,7 @@ private:
 	void OutputDirectory(BookmarksFolder& dir, int indent, bool first);
 	void OutputBookmark(Bookmark& bookmark, int indent, bool first);
 };
-
+/*
 class BeOutput : public BookmarksOutput {
 public:
 	BeOutput();
@@ -90,6 +94,6 @@ public:
 
 	BookmarksEntry* Input(const char* source);
 };
-
+*/
 
 #endif // BOOKMARKS_FORMAT_H

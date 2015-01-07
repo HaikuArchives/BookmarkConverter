@@ -93,7 +93,8 @@ BookmarksFolder* doDirectory(BDirectory& dir, const char* name)
 	return result;
 }
 
-status_t extract(const char* path, BookmarksFormat* format)
+status_t extract(const char* path, const char* destination,
+	BookmarksOutput* format)
 {
 	BDirectory parent(path);
 	if (parent.InitCheck() != B_OK)
@@ -101,14 +102,14 @@ status_t extract(const char* path, BookmarksFormat* format)
 
 	BookmarksFolder* result = doDirectory(parent, NULL);
 
-	format->Output(result);
+	format->Output(result, destination);
 
 	delete result;
 
 	return B_OK;
 }
 
-int helpMessage(int code, BookmarksFormat* toDelete)
+int helpMessage(int code, BookmarksOutput* toDelete)
 {
 	delete toDelete;
 	std::cout	<< "Converts WebPositive bookmarks to various formats."
@@ -128,8 +129,9 @@ int helpMessage(int code, BookmarksFormat* toDelete)
 
 int main(int argc, char* argv[])
 {
-	BookmarksFormat* chosen = NULL;
-	BString path;
+	BookmarksOutput* chosen = NULL;
+	BString source;
+	BString destination;
 	int mode;
 	int curarg = 0;
 	while (curarg + 1 < argc) {
@@ -137,38 +139,50 @@ int main(int argc, char* argv[])
 		BString current(argv[curarg]);
 		if (current == "-h" || current == "--help")
 			return helpMessage(0, chosen);
-		else if (current == "-f" || current == "--format") {
+		else if (current == "-t" || current == "--to") {
 			if (curarg == argc - 1)
 				return helpMessage(1, chosen);
 			else {
 				curarg++;
 				BString format(argv[curarg]);
 				if (format.ICompare("html") == 0)
-					chosen = new HTMLFormat();
+					chosen = new HTMLOutput();
 				else if (format.ICompare("chrome") == 0)
-					chosen = new ChromeFormat();
+					chosen = new ChromeOutput();
 				else
 					return helpMessage(2, chosen);
 			}
+		} else if (current == "-i") {
+			if (curarg == argc - 1)
+				return helpMessage(4, chosen);
+			else {
+				curarg++;
+				source = argv[curarg];
+			}
+		} else if (current == "-o") {
+			if (curarg == argc - 1)
+				return helpMessage(5, chosen);
+			else {
+				curarg++;
+				destination = argv[curarg];
+			}
 		} else {
-			if (path != "")
-				return helpMessage(3, chosen);
-			path = current;
+			return helpMessage(3, chosen);
 		}
 	}
 
-	if (path == "") {
+	if (source == "") {
 		BPath dir;
 		if (find_directory(B_USER_SETTINGS_DIRECTORY, &dir) == B_OK) {
-			path = dir.Path();
-			path << "/WebPositive/Bookmarks/";
+			source = dir.Path();
+			source << "/WebPositive/Bookmarks/";
 		}
 	}
 
 	if (chosen == NULL)
-		chosen = new HTMLFormat();
+		chosen = new HTMLOutput();
 
-	extract(path.String(), chosen);
+	extract(source.String(), destination.String(), chosen);
 
 	delete chosen;
 	return 0;
