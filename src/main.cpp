@@ -106,7 +106,7 @@ int main(int argc, char* argv[])
 	if (read != NULL)
 		output->Output(read, destination.String());
 	else
-		std::cerr << "There was an error reading the input";
+		std::cerr << "There was an error reading the input" << std::endl;
 
 	delete input;
 	delete output;
