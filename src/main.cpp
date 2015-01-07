@@ -23,7 +23,6 @@
 
 Bookmark* doFile(BFile& file)
 {
-	Bookmark* result = new Bookmark();
 
 	BNodeInfo nodeInfo(&file);
 
@@ -33,6 +32,7 @@ Bookmark* doFile(BFile& file)
 	if (BString(buffer) != "application/x-vnd.Be-bookmark")
 		return NULL;
 
+	Bookmark* result = new Bookmark();
 	BString title;
 
 	struct attr_info info;

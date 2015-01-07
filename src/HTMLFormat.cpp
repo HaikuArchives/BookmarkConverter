@@ -1,5 +1,5 @@
 /*
- * HTMLOutput.cpp
+ * HTMLFormat.cpp
  * Copyright (c) 2015 Markus Himmel. All rights reserved.
  * Distributed under the terms of the MIT license.
  */
@@ -14,7 +14,9 @@
 
 void HTMLOutput::Output(BookmarksEntry* entry, const char* destination)
 {
-	delete fDestination;
+	if (fDestination != &std::cout) {
+		delete fDestination;
+	}
 
 	if (destination != NULL) {
 		fDestination = new std::ofstream(destination);
