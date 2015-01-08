@@ -24,12 +24,12 @@ int helpMessage(int code, BookmarksOutput* a, BookmarksInput* b)
 				<< "       bookmarkconverter --webpositive-import -f [format]"
 				<< " [outputpath]" << std::endl
 				<< "       bookmarkconverter --qupzilla-import -f [format]"
-				<< " [outputpath]" << std::endl << std::endl
-				<< "       format                "
-				<< "The destination format (HTML, CHROME, WEBPOSITIVE)"
+				<< " [outputpath]" << std::endl
+				<< "       bookmarkconverter --help" << std::endl
 				<< std::endl
-				<< "       -h --help             "
-				<< "Displays this help message." << std::endl;
+				<< "       format            "
+				<< "The destination format (HTML, CHROME, WEBPOSITIVE)"
+				<< std::endl;
 	return code;
 }
 
