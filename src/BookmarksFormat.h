@@ -104,4 +104,24 @@ private:
 	Bookmark* readItem(BMessage& info);
 };
 
+class QupZillaOutput : public BookmarksOutput {
+public:
+	QupZillaOutput();
+	~QupZillaOutput();
+
+	void Output(BookmarksEntry* entry, const char* destination);
+
+	void SetIndentSize(int spaces);
+	int GetIndentSize();
+
+private:
+	std::ostream* fDestination;
+	int fIndentSize;
+
+	void HandleItem(BookmarksEntry* entry, int indent, bool first);
+	void OutputDirectory(BookmarksFolder& dir, int indent, bool first);
+	void OutputBookmark(Bookmark& bookmark, int indent, bool first);
+};
+
+
 #endif // BOOKMARKS_FORMAT_H

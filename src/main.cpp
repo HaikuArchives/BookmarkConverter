@@ -58,6 +58,8 @@ int main(int argc, char* argv[])
 					output = new ChromeOutput();
 				else if (format.ICompare("webpositive") == 0)
 					output = new BeOutput();
+				else if (format.ICompare("qupzilla") == 0)
+					output = new QupZillaOutput();
 				else
 					return helpMessage(2, output, input);
 			}
