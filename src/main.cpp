@@ -4,9 +4,11 @@
  * Distributed under the terms of the MIT license.
  */
 
+#include <algorithm>
 #include <iostream>
 
 #include <String.h>
+#include <Directory.h>
 
 #include "BookmarksTree.h"
 #include "BookmarksFormat.h"
@@ -37,16 +39,17 @@ int main(int argc, char* argv[])
 {
 	BookmarksOutput* output = NULL;
 	BookmarksInput* input = NULL;
-	BString source;
-	BString destination;
 	int mode;
 	int curarg = 0;
+	BString paths[2];
+	int curpath = 0;
+
 	while (curarg + 1 < argc) {
 		curarg++;
 		BString current(argv[curarg]);
 		if (current == "-h" || current == "--help")
 			return helpMessage(0, output, input);
-		else if (current == "-t" || current == "--to") {
+		else if (current == "-f" || current == "--format") {
 			if (curarg == argc - 1)
 				return helpMessage(1, output, input);
 			else {
@@ -63,47 +66,33 @@ int main(int argc, char* argv[])
 				else
 					return helpMessage(2, output, input);
 			}
-		} else if (current == "-f" || current == "--from") {
-			if (curarg == argc - 1)
-				return helpMessage(6, output, input);
-			else {
-				curarg++;
-				BString format(argv[curarg]);
-				if (format.ICompare("webpositive") == 0)
-					input = new BeInput();
-				else if (format.ICompare("qupzilla") == 0)
-					input = new QupZillaInput();
-				else
-					return helpMessage(7, output, input);
-			}
-		} else if (current == "-i") {
-			if (curarg == argc - 1)
-				return helpMessage(4, output, input);
-			else {
-				curarg++;
-				source = argv[curarg];
-			}
-		} else if (current == "-o") {
-			if (curarg == argc - 1)
-				return helpMessage(5, output, input);
-			else {
-				curarg++;
-				destination = argv[curarg];
-			}
-		} else {
-			return helpMessage(3, output, input);
-		}
+		} else if (current == "--webpositive-import") {
+			input = new BeInput();
+			paths[0] = "";
+			curpath = std::max(curpath, 1);
+		} else if (current == "--qupzilla-import") {
+			input = new QupZillaInput();
+			paths[0] = "";
+			curpath == std::max(curpath, 1);
+		} else if (curpath >= 2)
+			return helpMessage(5, output, input);
+		else
+			paths[curpath++] = argv[curarg];
+
 	}
 
-	if (input == NULL)
-		input = new BeInput();
+	if (input == NULL) {
+		BDirectory test(paths[0].String());
+		input = (test.InitCheck() == B_OK) ?
+			new BeInput() : new QupZillaInput();
+	}
 
 	if (output == NULL)
-		output = new HTMLOutput();
+		return helpMessage(4, output, input);
 
-	BookmarksEntry* read = input->Input(source.String());
+	BookmarksEntry* read = input->Input(paths[0].String());
 	if (read != NULL)
-		output->Output(read, destination.String());
+		output->Output(read, paths[1].String());
 	else
 		std::cerr << "There was an error reading the input" << std::endl;
 
