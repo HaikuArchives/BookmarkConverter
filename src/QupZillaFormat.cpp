@@ -150,6 +150,15 @@ const int kBaseOffset = 3;
 
 void QupZillaOutput::Output(BookmarksEntry* entry, const char* destination)
 {
+	BPath dir;
+	if (find_directory(B_USER_SETTINGS_DIRECTORY, &dir) == B_OK) {
+		BString path(dir.Path());
+		path << "/Qt/.config/qupzilla/profiles/default/bookmarks.json";
+		std::cerr << "Put the generated file into " << path.String()
+			<< " for use with QupZilla." << std::endl;
+
+	}
+
 	if (fDestination != &std::cout) {
 		delete fDestination;
 	}

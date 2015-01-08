@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
 		} else if (current == "--qupzilla-import") {
 			input = new QupZillaInput();
 			paths[0] = "";
-			curpath == std::max(curpath, 1);
+			curpath = std::max(curpath, 1);
 		} else if (curpath >= 2)
 			return helpMessage(5, output, input);
 		else

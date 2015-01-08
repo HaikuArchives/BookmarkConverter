@@ -126,6 +126,15 @@ BeOutput::~BeOutput()
 
 void BeOutput::Output(BookmarksEntry* entry, const char* destination)
 {
+	BPath loc;
+	if (find_directory(B_USER_SETTINGS_DIRECTORY, &loc) == B_OK) {
+		BString path(loc.Path());
+		path << "/WebPositive/Bookmarks/";
+		std::cerr << "Put the generated files into " << path.String()
+			<< " for use with WebPositive." << std::endl;
+	}
+
+
 	BDirectory dir(destination);
 	if (dir.InitCheck() == B_OK)
 		HandleItem(entry, true, dir);
