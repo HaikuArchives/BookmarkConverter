@@ -178,4 +178,7 @@ void BeOutput::OutputBookmark(Bookmark& entry, BDirectory& dest)
 		sink.WriteAttr("META:keyw", 'CSTR', 0, entry.GetKeywords(),
 			BString(entry.GetKeywords()).Length() + 1);
 	}
+
+	BNodeInfo info(&sink);
+	info.SetType("application/x-vnd.Be-bookmark");
 }

@@ -20,9 +20,10 @@ int helpMessage(int code, BookmarksOutput* a, BookmarksInput* b)
 				<< "Usage: bookmarkconverter [options]"
 				<< std::endl << std::endl
 				<< "    -f --from    FORMAT   "
-				<< "The source format (BE, QUPZILLA)" << std::endl
+				<< "The source format (WEBPOSITIVE, QUPZILLA)" << std::endl
 				<< "    -t --to      FORMAT   "
-				<< "The destination format (HTML, CHROME, BE)" << std::endl
+				<< "The destination format (HTML, CHROME, WEBPOSITIVE)"
+				<< std::endl
 				<< "    -i           PATH     "
 				<< "The location of the input" << std::endl
 				<< "    -o           PATH     "
@@ -55,7 +56,7 @@ int main(int argc, char* argv[])
 					output = new HTMLOutput();
 				else if (format.ICompare("chrome") == 0)
 					output = new ChromeOutput();
-				else if (format.ICompare("be") == 0)
+				else if (format.ICompare("webpositive") == 0)
 					output = new BeOutput();
 				else
 					return helpMessage(2, output, input);
@@ -66,7 +67,7 @@ int main(int argc, char* argv[])
 			else {
 				curarg++;
 				BString format(argv[curarg]);
-				if (format.ICompare("be") == 0)
+				if (format.ICompare("webpositive") == 0)
 					input = new BeInput();
 				else if (format.ICompare("qupzilla") == 0)
 					input = new QupZillaInput();
