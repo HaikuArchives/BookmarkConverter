@@ -159,9 +159,8 @@ void QupZillaOutput::Output(BookmarksEntry* entry, const char* destination)
 
 	}
 
-	if (fDestination != &std::cout) {
+	if (fDestination != &std::cout)
 		delete fDestination;
-	}
 
 	if (destination != NULL) {
 		fDestination = new std::ofstream(destination);
@@ -187,11 +186,10 @@ void QupZillaOutput::Output(BookmarksEntry* entry, const char* destination)
 
 void QupZillaOutput::HandleItem(BookmarksEntry* entry, int indent, bool first)
 {
-	if (entry->IsFolder()) {
+	if (entry->IsFolder())
 		OutputDirectory(*static_cast<BookmarksFolder*>(entry), indent, first);
-	} else if (entry->IsBookmark()) {
+	else if (entry->IsBookmark())
 		OutputBookmark(*static_cast<Bookmark*>(entry), indent, first);
-	}
 }
 
 void QupZillaOutput::OutputDirectory(BookmarksFolder& dir, int indent,
@@ -207,17 +205,16 @@ void QupZillaOutput::OutputDirectory(BookmarksFolder& dir, int indent,
 		<< ind << "{" << std::endl << ind << " \"children\": [";
 
 	std::vector<BookmarksEntry*>::iterator it;
-	for (it = dir.begin(); it != dir.end(); it++) {
+	for (it = dir.begin(); it != dir.end(); it++)
 		HandleItem(*it, indent + 1, it == dir.begin());
-	}
 
 	if (dir.size() > 0)
 		*fDestination << std::endl << ind << " ";
-	*fDestination << "]," << std::endl
-				<< ind << " \"name\": \"" << dir.GetName() << "\","
+	*fDestination	<< "]," << std::endl
+					<< ind << " \"name\": \"" << dir.GetName() << "\","
 					<< std::endl
-				<< ind << " \"type\": \"folder\"" << std::endl
-				<< ind << "}";
+					<< ind << " \"type\": \"folder\"" << std::endl
+					<< ind << "}";
 }
 
 void QupZillaOutput::OutputBookmark(Bookmark& bookmark, int indent, bool first)
@@ -233,12 +230,12 @@ void QupZillaOutput::OutputBookmark(Bookmark& bookmark, int indent, bool first)
 		*fDestination << ind << " \"keyword\": \"" << bookmark.GetKeywords()
 			<< "\"," << std::endl;
 
-	*fDestination << ind << " \"name\": \"" << bookmark.GetTitle() << "\","
+	*fDestination	<< ind << " \"name\": \"" << bookmark.GetTitle() << "\","
 					<< std::endl
-				<< ind << " \"type\": \"url\"," << std::endl
-				<< ind << " \"url\": \"" << bookmark.GetURL() << "\""
+					<< ind << " \"type\": \"url\"," << std::endl
+					<< ind << " \"url\": \"" << bookmark.GetURL() << "\""
 					<< std::endl
-				<< ind << "}";
+					<< ind << "}";
 }
 
 void QupZillaOutput::SetIndentSize(int spaces)

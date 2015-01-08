@@ -14,9 +14,8 @@
 
 void HTMLOutput::Output(BookmarksEntry* entry, const char* destination)
 {
-	if (fDestination != &std::cout) {
+	if (fDestination != &std::cout)
 		delete fDestination;
-	}
 
 	if (destination != NULL) {
 		fDestination = new std::ofstream(destination);
@@ -44,11 +43,10 @@ void HTMLOutput::Output(BookmarksEntry* entry, const char* destination)
 
 void HTMLOutput::HandleItem(BookmarksEntry* entry, int indent)
 {
-	if (entry->IsFolder()) {
+	if (entry->IsFolder())
 		OutputDirectory(*static_cast<BookmarksFolder*>(entry), indent);
-	} else if (entry->IsBookmark()) {
+	else if (entry->IsBookmark())
 		OutputBookmark(*static_cast<Bookmark*>(entry), indent);
-	}
 }
 
 void HTMLOutput::OutputDirectory(BookmarksFolder& dir, int indent)
@@ -61,9 +59,8 @@ void HTMLOutput::OutputDirectory(BookmarksFolder& dir, int indent)
 			<< ind << "<DL><p>" << std::endl;
 
 	std::vector<BookmarksEntry*>::iterator it;
-	for (it = dir.begin(); it != dir.end(); it++) {
+	for (it = dir.begin(); it != dir.end(); it++)
 		HandleItem(*it, indent + 1);
-	}
 
 	if (indent > 0)
 		*fDestination << ind << "</DL><p>" << std::endl;

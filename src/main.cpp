@@ -37,10 +37,8 @@ int main(int argc, char* argv[])
 {
 	BookmarksOutput* output = NULL;
 	BookmarksInput* input = NULL;
-	int mode;
-	int curarg = 0;
+	int curarg = 0, curpath = 0;;
 	BString paths[2];
-	int curpath = 0;
 
 	while (curarg + 1 < argc) {
 		curarg++;

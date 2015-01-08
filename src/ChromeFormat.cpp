@@ -14,9 +14,8 @@
 
 void ChromeOutput::Output(BookmarksEntry* entry, const char* destination)
 {
-	if (fDestination != &std::cout) {
+	if (fDestination != &std::cout)
 		delete fDestination;
-	}
 
 	if (destination != NULL) {
 		fDestination = new std::ofstream(destination);
@@ -42,11 +41,10 @@ void ChromeOutput::Output(BookmarksEntry* entry, const char* destination)
 
 void ChromeOutput::HandleItem(BookmarksEntry* entry, int indent, bool first)
 {
-	if (entry->IsFolder()) {
+	if (entry->IsFolder())
 		OutputDirectory(*static_cast<BookmarksFolder*>(entry), indent, first);
-	} else if (entry->IsBookmark()) {
+	else if (entry->IsBookmark())
 		OutputBookmark(*static_cast<Bookmark*>(entry), indent, first);
-	}
 }
 
 void ChromeOutput::OutputDirectory(BookmarksFolder& dir, int indent,
@@ -61,19 +59,18 @@ void ChromeOutput::OutputDirectory(BookmarksFolder& dir, int indent,
 	*fDestination << "{" << std::endl << ind << "\"children\": [ ";
 
 	std::vector<BookmarksEntry*>::iterator it;
-	for (it = dir.begin(); it != dir.end(); it++) {
+	for (it = dir.begin(); it != dir.end(); it++)
 		HandleItem(*it, indent + 1, it == dir.begin());
-	}
 
 	BString sInd;
 	sInd.Append(' ', (indent - 1) * fIndentSize);
 
 	*fDestination	<< " ]," << std::endl
-				<< ind << "\"id\": \"" << fNextID << "\"," << std::endl
-				<< ind << "\"name\": \"" << dir.GetName() << "\","
+					<< ind << "\"id\": \"" << fNextID << "\"," << std::endl
+					<< ind << "\"name\": \"" << dir.GetName() << "\","
 					<< std::endl
-				<< ind << "\"type\": \"folder\"" << std::endl
-				<< sInd << "}";
+					<< ind << "\"type\": \"folder\"" << std::endl
+					<< sInd << "}";
 
 	fNextID++;
 }
@@ -90,13 +87,13 @@ void ChromeOutput::OutputBookmark(Bookmark& bookmark, int indent, bool first)
 		*fDestination << ", ";
 
 	*fDestination	<< "{" << std::endl
-				<< ind << "\"id\": \"" << fNextID << "\"," << std::endl
-				<< ind << "\"name\": \"" << bookmark.GetTitle() << "\","
+					<< ind << "\"id\": \"" << fNextID << "\"," << std::endl
+					<< ind << "\"name\": \"" << bookmark.GetTitle() << "\","
 					<< std::endl
-				<< ind << "\"type\": \"url\"," << std::endl
-				<< ind << "\"url\": \"" << bookmark.GetURL() << "\""
+					<< ind << "\"type\": \"url\"," << std::endl
+					<< ind << "\"url\": \"" << bookmark.GetURL() << "\""
 					<< std::endl
-				<< sInd << "}";
+					<< sInd << "}";
 
 	fNextID++;
 }

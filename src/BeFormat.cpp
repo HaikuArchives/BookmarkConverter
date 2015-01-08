@@ -4,8 +4,6 @@
  * Distributed under the terms of the MIT license.
  */
 
-#include <algorithm>
-
 #include <Directory.h>
 #include <Entry.h>
 #include <File.h>
@@ -21,7 +19,6 @@
 
 Bookmark* BeInput::readFile(BFile& file)
 {
-
 	BNodeInfo nodeInfo(&file);
 
 	char buffer[B_MIME_TYPE_LENGTH];
@@ -46,13 +43,12 @@ Bookmark* BeInput::readFile(BFile& file)
 		if (file.ReadAttr(attrBuffer, info.type, 0, data, info.size) ==
 			info.size) {
 			BString name(attrBuffer);
-			if (name == "META:url") {
+			if (name == "META:url")
 				result->SetURL((const char *)data);
-			} else if (name == "META:title") {
+			else if (name == "META:title")
 				result->SetTitle((const char *)data);
-			} else if (name == "META:keyw") {
+			else if (name == "META:keyw")
 				result->SetKeywords((const char *)data);
-			}
 		}
 		delete[] data;
 	}
@@ -148,11 +144,10 @@ void BeOutput::Output(BookmarksEntry* entry, const char* destination)
 
 void BeOutput::HandleItem(BookmarksEntry* entry, bool first, BDirectory& dest)
 {
-	if (entry->IsFolder()) {
+	if (entry->IsFolder())
 		OutputDirectory(*static_cast<BookmarksFolder*>(entry), first, dest);
-	} else if (entry->IsBookmark()) {
+	else if (entry->IsBookmark())
 		OutputBookmark(*static_cast<Bookmark*>(entry), dest);
-	}
 }
 
 void BeOutput::OutputDirectory(BookmarksFolder& entry, bool first,
@@ -167,9 +162,8 @@ void BeOutput::OutputDirectory(BookmarksFolder& entry, bool first,
 	}
 	
 	BookmarksFolder::iterator it;
-	for (it = entry.begin(); it != entry.end(); it++) {
+	for (it = entry.begin(); it != entry.end(); it++)
 		HandleItem(*it, false, next);
-	}
 }
 
 void BeOutput::OutputBookmark(Bookmark& entry, BDirectory& dest)
@@ -191,3 +185,4 @@ void BeOutput::OutputBookmark(Bookmark& entry, BDirectory& dest)
 	BNodeInfo info(&sink);
 	info.SetType("application/x-vnd.Be-bookmark");
 }
+

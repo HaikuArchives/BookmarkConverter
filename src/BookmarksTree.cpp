@@ -22,9 +22,8 @@ BookmarksFolder::~BookmarksFolder()
 {
 	std::vector<BookmarksEntry*>::iterator it;
 
-	for (it = this->begin(); it != this->end(); it++) {
+	for (it = this->begin(); it != this->end(); it++)
 		delete (*it);
-	}
 }
 
 bool BookmarksFolder::IsBookmark()

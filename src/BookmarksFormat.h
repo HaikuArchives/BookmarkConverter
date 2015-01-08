@@ -9,12 +9,12 @@
 
 #include <iostream>
 
-class BMessage;
-class BFile;
 class BDirectory;
+class BFile;
+class BMessage;
+class Bookmark;
 class BookmarksEntry;
 class BookmarksFolder;
-class Bookmark;
 
 class BookmarksOutput {
 public:
@@ -44,7 +44,6 @@ private:
 	void OutputDirectory(BookmarksFolder& dir, int indent);
 	void OutputBookmark(Bookmark& bookmark, int indent);
 };
-
 
 class ChromeOutput : public BookmarksOutput {
 public:
@@ -123,5 +122,5 @@ private:
 	void OutputBookmark(Bookmark& bookmark, int indent, bool first);
 };
 
-
 #endif // BOOKMARKS_FORMAT_H
+
