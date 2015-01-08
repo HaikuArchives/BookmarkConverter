@@ -5,8 +5,6 @@
  */
 
 #include <algorithm>
-#include <iostream>
-#include <limits>
 
 #include <Directory.h>
 #include <Entry.h>
@@ -128,15 +126,19 @@ BeOutput::~BeOutput()
 
 void BeOutput::Output(BookmarksEntry* entry, const char* destination)
 {
-	std::cout << "Yes: " << destination << std::endl;
 	BDirectory dir(destination);
 	if (dir.InitCheck() == B_OK)
 		HandleItem(entry, true, dir);
+	else {
+		BDirectory created;
+		dir.CreateDirectory(destination, &created);
+		if (created.InitCheck() == B_OK)
+			HandleItem(entry, true, created);
+	}
 }
 
 void BeOutput::HandleItem(BookmarksEntry* entry, bool first, BDirectory& dest)
 {
-	std::cout << "HandleItem" << std::endl;
 	if (entry->IsFolder()) {
 		OutputDirectory(*static_cast<BookmarksFolder*>(entry), first, dest);
 	} else if (entry->IsBookmark()) {

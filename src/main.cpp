@@ -4,19 +4,9 @@
  * Distributed under the terms of the MIT license.
  */
 
-#include <algorithm>
 #include <iostream>
-#include <limits>
 
-#include <Directory.h>
-#include <Entry.h>
-#include <File.h>
-#include <FindDirectory.h>
-#include <NodeInfo.h>
-#include <Path.h>
 #include <String.h>
-
-#include <fs_attr.h>
 
 #include "BookmarksTree.h"
 #include "BookmarksFormat.h"
@@ -25,18 +15,20 @@ int helpMessage(int code, BookmarksOutput* a, BookmarksInput* b)
 {
 	delete a;
 	delete b;
-	std::cout	<< "Converts WebPositive bookmarks to various formats."
+	std::cout	<< "Converts browser bookmarks between a selection of formats."
 				<< std::endl << std::endl
-				<< "Usage: bookmarkconverter [option] [path]"
+				<< "Usage: bookmarkconverter [options]"
 				<< std::endl << std::endl
-				<< "    -f --format FORMAT    "
-				<< "Chooses the format (HTML, CHROME)" << std::endl
+				<< "    -f --from    FORMAT   "
+				<< "The source format (BE, QUPZILLA)" << std::endl
+				<< "    -t --to      FORMAT   "
+				<< "The destination format (HTML, CHROME, BE)" << std::endl
+				<< "    -i           PATH     "
+				<< "The location of the input" << std::endl
+				<< "    -o           PATH     "
+				<< "Where the output will be written" << std::endl
 				<< "    -h --help             "
-				<< "Displays this message" << std::endl << std::endl
-				<< "    path                  "
-				<< "Optional. Sets the path to the bookmarks folder."
-				<< std::endl << "                           "
-				<< "Default: ~/config/settings/WebPositive/Bookmarks";
+				<< "Displays this help message." << std::endl;
 	return code;
 }
 
@@ -76,6 +68,8 @@ int main(int argc, char* argv[])
 				BString format(argv[curarg]);
 				if (format.ICompare("be") == 0)
 					input = new BeInput();
+				else if (format.ICompare("qupzilla") == 0)
+					input = new QupZillaInput();
 				else
 					return helpMessage(7, output, input);
 			}

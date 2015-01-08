@@ -9,6 +9,7 @@
 
 #include <iostream>
 
+class BMessage;
 class BFile;
 class BDirectory;
 class BookmarksEntry;
@@ -90,14 +91,17 @@ private:
 	BookmarksFolder* readDirectory(BDirectory& dir, const char* name);
 };
 
-/*
+
 class QupZillaInput : public BookmarksInput {
 public:
 	QupZillaInput();
 	~QupZillaInput();
 
 	BookmarksEntry* Input(const char* source);
+
+private:
+	BookmarksFolder* readDirectory(BMessage& info);
+	Bookmark* readItem(BMessage& info);
 };
-*/
 
 #endif // BOOKMARKS_FORMAT_H
