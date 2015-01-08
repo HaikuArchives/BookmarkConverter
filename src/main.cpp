@@ -19,18 +19,16 @@ int helpMessage(int code, BookmarksOutput* a, BookmarksInput* b)
 	delete b;
 	std::cout	<< "Converts browser bookmarks between a selection of formats."
 				<< std::endl << std::endl
-				<< "Usage: bookmarkconverter [options]"
-				<< std::endl << std::endl
-				<< "    -f --from    FORMAT   "
-				<< "The source format (WEBPOSITIVE, QUPZILLA)" << std::endl
-				<< "    -t --to      FORMAT   "
+				<< "Usage: bookmarkconverter -f [format] [inputpath]"
+				<< " [outputpath]" << std::endl
+				<< "       bookmarkconverter --webpositive-import -f [format]"
+				<< " [outputpath]" << std::endl
+				<< "       bookmarkconverter --qupzilla-import -f [format]"
+				<< " [outputpath]" << std::endl << std::endl
+				<< "       format                "
 				<< "The destination format (HTML, CHROME, WEBPOSITIVE)"
 				<< std::endl
-				<< "    -i           PATH     "
-				<< "The location of the input" << std::endl
-				<< "    -o           PATH     "
-				<< "Where the output will be written" << std::endl
-				<< "    -h --help             "
+				<< "       -h --help             "
 				<< "Displays this help message." << std::endl;
 	return code;
 }
