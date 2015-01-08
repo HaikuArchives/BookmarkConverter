@@ -8,7 +8,7 @@ How to build
 
     make
 
-or use haikuporter recipe [here](https://bitbucket.org/TwoFx/haikuports/src/f9acbad1b36c93257885999a7df5938adbfad686/haiku-apps/bookmarkconverter/bookmarkconverter-0.2.0.recipe?at=bookmarkconverter).
+or use haikuporter recipe [here](https://bitbucket.org/TwoFx/haikuports/src/afab25e4fee6ab564a0eaa3463b84766df26801c/haiku-apps/bookmarkconverter/bookmarkconverter-0.3.0.recipe?at=bookmarkconverter).
 
 Usage
 -----
