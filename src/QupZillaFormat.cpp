@@ -7,10 +7,12 @@
 #include <fstream>
 #include <iostream>
 
-#include <Json.h>
+#include <Directory.h>
+#include <Entry.h>
 #include <File.h>
-#include <Path.h>
 #include <FindDirectory.h>
+#include <Json.h>
+#include <Path.h>
 
 #include "BookmarksTree.h"
 #include "BookmarksFormat.h"
@@ -154,8 +156,23 @@ void QupZillaOutput::Output(BookmarksEntry* entry, const char* destination)
 	if (find_directory(B_USER_SETTINGS_DIRECTORY, &dir) == B_OK) {
 		BString path(dir.Path());
 		path << "/Qt/.config/qupzilla/profiles/default/bookmarks.json";
-		std::cerr << "Put the generated file into " << path.String()
-			<< " for use with QupZilla." << std::endl;
+		BEntry dest(destination, false);
+		BEntry def(path, false);
+		if (dest == def) {
+			if (def.Exists()) {
+				BDirectory parent;
+				def.GetParent(&parent);
+				int replaceIndex = 0;
+				while (BEntry(&parent, (BString("bookmarks-old-")
+					<< replaceIndex << ".json").String()).Exists())
+					replaceIndex++;
+				def.Rename(BString("bookmarks-old-") << replaceIndex
+					<< ".json");
+			}
+		}
+		else
+			std::cerr << "Put the generated file into " << path.String()
+				<< " for use with QupZilla." << std::endl;
 
 	}
 
