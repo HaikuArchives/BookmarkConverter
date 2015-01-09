@@ -7,8 +7,10 @@
 #include <algorithm>
 #include <iostream>
 
-#include <String.h>
 #include <Directory.h>
+#include <FindDirectory.h>
+#include <Path.h>
+#include <String.h>
 
 #include "BookmarksTree.h"
 #include "BookmarksFormat.h"
@@ -21,15 +23,21 @@ int helpMessage(int code, BookmarksOutput* a, BookmarksInput* b)
 				<< std::endl << std::endl
 				<< "Usage: bookmarkconverter -f [format] [inputpath]"
 				<< " [outputpath]" << std::endl
-				<< "       bookmarkconverter --webpositive-import -f [format]"
-				<< " [outputpath]" << std::endl
-				<< "       bookmarkconverter --qupzilla-import -f [format]"
-				<< " [outputpath]" << std::endl
 				<< "       bookmarkconverter --help" << std::endl
 				<< std::endl
 				<< "       format            "
 				<< "The destination format (HTML, CHROME, WEBPOSITIVE, "
 				<< "QUPZILLA)" << std::endl;
+
+	BPath dir;
+	if (find_directory(B_USER_SETTINGS_DIRECTORY, &dir) == B_OK) {
+		BString path(dir.Path());
+		std::cout << std::endl << "The default path for QupZilla bookmarks is "
+			<< path << "/Qt/.config/qupzilla/profiles/default/bookmarks.json"
+			<< std::endl << "The default path for WebPositive bookmarks is "
+			<< path << "/WebPositive/Bookmarks" << std::endl;
+	}
+
 	return code;
 }
 
@@ -76,6 +84,9 @@ int main(int argc, char* argv[])
 			paths[curpath++] = argv[curarg];
 
 	}
+
+	if (paths[0] == "")
+		return helpMessage(3, output, input);
 
 	if (input == NULL) {
 		BDirectory test(paths[0].String());

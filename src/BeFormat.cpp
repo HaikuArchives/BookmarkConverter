@@ -98,13 +98,6 @@ BeInput::~BeInput()
 BookmarksEntry* BeInput::Input(const char* source)
 {
 	BString path(source);
-	if (path == "") {
-		BPath dir;
-		if (find_directory(B_USER_SETTINGS_DIRECTORY, &dir) == B_OK) {
-			path = dir.Path();
-			path << "/WebPositive/Bookmarks/";
-		}
-	}
 	BDirectory parent(path);
 	if (parent.InitCheck() != B_OK)
 		return NULL;

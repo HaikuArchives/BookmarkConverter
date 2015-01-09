@@ -27,16 +27,7 @@ QupZillaInput::~QupZillaInput()
 
 BookmarksEntry* QupZillaInput::Input(const char* source)
 {
-	BString path(source);
-	if (path == "") {
-		BPath dir;
-		if (find_directory(B_USER_SETTINGS_DIRECTORY, &dir) == B_OK) {
-			path = dir.Path();
-			path << "/Qt/.config/qupzilla/profiles/default/bookmarks.json";
-		}
-	}
-
-	BFile file(path.String(), B_READ_ONLY);
+	BFile file(source, B_READ_ONLY);
 	if (file.InitCheck() != B_OK)
 		return NULL;
 
