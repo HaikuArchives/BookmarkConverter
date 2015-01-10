@@ -32,10 +32,12 @@ int helpMessage(int code, BookmarksOutput* a, BookmarksInput* b)
 	BPath dir;
 	if (find_directory(B_USER_SETTINGS_DIRECTORY, &dir) == B_OK) {
 		BString path(dir.Path());
-		std::cout << std::endl << "The default path for QupZilla bookmarks is "
-			<< path << "/Qt/.config/qupzilla/profiles/default/bookmarks.json"
-			<< std::endl << "The default path for WebPositive bookmarks is "
-			<< path << "/WebPositive/Bookmarks" << std::endl;
+		std::cout << std::endl << "The default path for QupZilla bookmarks is:"
+			<< std::endl << "\t" << path <<
+			"/Qt/.config/qupzilla/profiles/default/bookmarks.json"
+			<< std::endl << "The default path for WebPositive bookmarks is:"
+			<< std::endl << "\t" << path << "/WebPositive/Bookmarks"
+			<< std::endl;
 	}
 
 	return code;

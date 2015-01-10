@@ -58,7 +58,7 @@ BookmarksEntry* QupZillaInput::Input(const char* source)
 	BookmarksFolder* top = new BookmarksFolder(), * child = NULL;
 
 	BMessage folder;
-	if (roots.FindMessage("bookmark_bar", &folder) == B_OK) {
+	if (roots.FindMessage("bookmark_menu", &folder) == B_OK) {
 		child = readDirectory(folder);
 		if (child != NULL)
 			top->push_back(child);
