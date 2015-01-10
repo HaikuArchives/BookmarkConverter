@@ -37,7 +37,7 @@ int helpMessage(int code, BookmarksOutput* a, BookmarksInput* b)
 			"/Qt/.config/qupzilla/profiles/default/bookmarks.json"
 			<< std::endl << "The default path for WebPositive bookmarks is:"
 			<< std::endl << "\t" << path << "/WebPositive/Bookmarks"
-			<< std::endl;
+			<< std::endl << std::endl;
 	}
 
 	return code;
