@@ -48,7 +48,7 @@ BookmarksEntry* QupZillaInput::Input(const char* source)
 	delete[] buffer;
 	BMessage decoded;
 
-	if (BJson::Parse(decoded, json) != B_OK)
+	if (BJson::Parse(json, decoded) != B_OK)
 		return NULL;
 
 	BMessage roots;
