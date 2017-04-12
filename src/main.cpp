@@ -92,8 +92,10 @@ int main(int argc, char* argv[])
 
 	if (input == NULL) {
 		BDirectory test(paths[0].String());
-		input = (test.InitCheck() == B_OK) ?
-			new BeInput() : new QupZillaInput();
+		if (test.InitCheck() == B_OK)
+			input = new BeInput();
+		else
+			input = new QupZillaInput();
 	}
 
 	if (output == NULL)
